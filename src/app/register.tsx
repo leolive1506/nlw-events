@@ -3,7 +3,7 @@ import { Alert, Image, View } from 'react-native'
 import { FontAwesome6, MaterialIcons } from '@expo/vector-icons'
 import { colors } from '@/styles/colors'
 import { Button } from '@/components/button'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
 import { StatusBar } from 'react-native'
 import { useState } from 'react'
 
@@ -15,11 +15,12 @@ export default function Register() {
     if (!name.trim() || !email.trim()) {
       return Alert.alert('Inscrição', 'Preencha todos os campos')
     }
+
+    router.push('/ticket')
   }
 
   return (
     <View className='flex-1 bg-green-500 items-center justify-center text-white p-8'>
-
       <StatusBar barStyle='light-content' />
 
       <Image
