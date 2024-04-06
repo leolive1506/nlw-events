@@ -12,7 +12,7 @@ export default function Layout() {
     Roboto_400Regular
   })
 
-  if (fontsLoaded) {
+  if (!fontsLoaded) {
     return <Loading />
   }
   
