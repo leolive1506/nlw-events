@@ -3,10 +3,31 @@ import { Credential } from "@/components/credential";
 import { Header } from "@/components/header";
 import { colors } from "@/styles/colors";
 import { FontAwesome } from "@expo/vector-icons";
-import { StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { Alert, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { ScrollView } from "react-native";
+import * as ImagePicker from "expo-image-picker"
 
 export default function Ticket() {
+  const [image, setImage] = useState('')
+
+  async function handleSelectImage() {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 4]
+      })
+
+      if (result.assets) {
+        setImage(result.assets[0].uri)
+      }
+    } catch (error) {
+      console.log(error)
+      Alert.alert("Foto", "Não foi possível selecionar a imagem.")
+    }
+  }
+
   return (
     <View className="flex-1 bg-green-500">
       <StatusBar barStyle='light-content' />
@@ -17,7 +38,10 @@ export default function Ticket() {
         contentContainerClassName="px-8 pb-8"
         showsVerticalScrollIndicator={false}
       >
-        <Credential />
+        <Credential 
+          image={image}
+          onChangeAvatar={handleSelectImage}
+        />
 
         <FontAwesome
           name="angle-double-down"
