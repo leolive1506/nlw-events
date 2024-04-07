@@ -6,17 +6,42 @@ import { Button } from '@/components/button'
 import { Link, router } from 'expo-router'
 import { StatusBar } from 'react-native'
 import { useState } from 'react'
+import { api } from '@/server/api'
+import axios from 'axios'
 
+const EVENT_ID = '9e9bd979-9d10-4915-b339-3786b1634f33'
 export default function Register() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  function handleRegister() {
-    if (!name.trim() || !email.trim()) {
-      return Alert.alert('Inscrição', 'Preencha todos os campos')
+  async function handleRegister() {
+    try {
+      if (!name.trim() || !email.trim()) {
+        return Alert.alert('Inscrição', 'Preencha todos os campos')
+      }
+  
+      setIsLoading(true)
+
+      const response = await api.post(`/events/${EVENT_ID}/attendees`, { name, email })
+
+      if (response.data.attendeeId) {
+        Alert.alert("Inscrição", "Inscrição realizada com sucesso", [
+          { text: "Ok", onPress: () => router.push('/ticket')}
+        ])
+      }
+    
+    } catch (error) {
+      console.log(error)
+      setIsLoading(false)
+      if (axios.isAxiosError(error)) {
+        if (String(error.response?.data.message).includes("already registered")) {
+          return Alert.alert('Inscrição', 'Esse e-mail já esta cadastrado!')
+        }
+      }
+
+      Alert.alert('Inscrição', 'Não foi possível realizar a inscrição')
     }
-
-    router.push('/ticket')
   }
 
   return (
@@ -59,6 +84,7 @@ export default function Register() {
         <Button
           title="Realizar inscrição"
           onPress={handleRegister}
+          isLoading={isLoading}
         />
         <Link
           href="/"
